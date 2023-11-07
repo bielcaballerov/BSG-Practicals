@@ -1,0 +1,17 @@
+---
+title: "rr"
+author: "Biel Caballero,Gerard Gomez"
+date: "2023-11-07"
+output: html_document
+---
+```{r}
+setwd("Practical_1_StatGen/upload/")
+data <- read.table("TSICHR22RAW.raw")
+```
+
+
+# STR
+```{r}
+
+```
+
