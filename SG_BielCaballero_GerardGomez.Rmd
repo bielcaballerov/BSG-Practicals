@@ -12,6 +12,65 @@ data <- read.table("TSICHR22RAW.raw")
 
 # STR
 ```{r}
+library(HardyWeinberg)
+data("NistSTRs")
+```
+
+## How many individuals and how many STRs contains the database?
+```{r}
+print(paste0("Therer are ",dim(NistSTRs)[1]," individuals"))
+print(paste0("Therer are ",dim(NistSTRs)[2]," STRs"))
+```
+
+## Write a function that determines the number of alleles for a STR. Determine the number of alleles for each STR in the database. Compute basic descriptive statistics of the number of alleles (mean, standard deviation, median, minimum, maximum).
+
+```{r}
+numberAlleles <- function(STR){
+  return(length(unique(STR)))
+}
+
+alleles <- numeric(ncol(NistSTRs))
+for(i in 1:ncol(NistSTRs)){
+  alleles[i] <- numberAlleles(NistSTRs[,i])
+}
+
+print("This is the number of alleles in each STR:")
+print(alleles)
+```
+
+```{r}
+print(paste0("The mean of alleles is ",mean(alleles)))
+print(paste0("The standard deviation of the number of alleles is ",sd(alleles)))
+print(paste0("The median of alleles is ",median(alleles)))
+print(paste0("The minimum of alleles is ",min(alleles)))
+print(paste0("The maximum of alleles is ",max(alleles)))
+```
+## Make a table with the number of STRs for a given number of alleles and present a barplot of the number STRs in each category. What is the most common number of alleles for an STR?
+
+```{r}
+tbl <- table(alleles)
+barplot(tbl)
+```
+As we can see in the barplot, the most common number of alleles for an STR is 7
+
+## Compute the expected heterozygosity for each STR. Make a histogram of the expected heterozygosity over all STRS. Compute the average expected heterozygosity over all STRs.
+
+```{r}
+expectedH <- numeric(ncol(NistSTRs))
+
+for(i in 1:ncol(NistSTRs)){
+  dis <- unique(NistSTRs[,i])
+  expectedH[i] <- 1/length(dis)
+}
+hist(expectedH)
+```
+```{r}
+print(paste0("The average expected heterozygosity is ", mean(expectedH)))
+```
+
+## Calculate also the observed heterozygosity for each STR. Plot observed against expected heterozy- gosity, using all STRs. What do you observe?
+
+```{r}
 
 ```
 
