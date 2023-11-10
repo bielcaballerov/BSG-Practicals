@@ -5,7 +5,6 @@ date: "2023-11-07"
 output: html_document
 ---
 ```{r}
-setwd("Practical_1_StatGen/upload/")
 data <- read.table("TSICHR22RAW.raw")
 ```
 
@@ -56,21 +55,45 @@ As we can see in the barplot, the most common number of alleles for an STR is 7
 ## Compute the expected heterozygosity for each STR. Make a histogram of the expected heterozygosity over all STRS. Compute the average expected heterozygosity over all STRs.
 
 ```{r}
-expectedH <- numeric(ncol(NistSTRs))
+He <- numeric(ncol(NistSTRs)/2-1)
 
-for(i in 1:ncol(NistSTRs)){
-  dis <- unique(NistSTRs[,i])
-  expectedH[i] <- 1/length(dis)
+for(i in 0:(ncol(NistSTRs)/2-1)){
+  chr1 <- NistSTRs[,i*2+1]
+  chr2 <- NistSTRs[,i*2+2]
+  chrC <- unique(append(chr1,chr2))
+  prob <- numeric(length(chrC))
+  for(j in 1:length(chr1)){
+    if(chr1[j] == chr2[j]){
+      prob[which(chr1[j]==chrC)] = prob[which(chr1[j]==chrC)] + 1 
+    } else {
+      prob[which(chr1[j]==chrC)] = prob[which(chr1[j]==chrC)] + 0.5
+      prob[which(chr2[j]==chrC)] = prob[which(chr2[j]==chrC)] + 0.5
+    }
+  }
+  prob <- (prob/nrow(NistSTRs))^2
+  He[i+1] <- 1-sum(prob)
 }
-hist(expectedH)
+hist(He)
 ```
+
 ```{r}
-print(paste0("The average expected heterozygosity is ", mean(expectedH)))
+print(paste0("The average expected heterozygosity is ", mean(He)))
 ```
 
 ## Calculate also the observed heterozygosity for each STR. Plot observed against expected heterozy- gosity, using all STRs. What do you observe?
 
 ```{r}
+Ho <- numeric(ncol(NistSTRs)/2-1)
+for(i in 0:(ncol(NistSTRs)/2-1)){
+  chr1 <- NistSTRs[,i*2+1]
+  chr2 <- NistSTRs[,i*2+2]
+  tbl <- table(chr1==chr2)
+  Ho[i+1] <- tbl[1]/(sum(tbl)) 
+}
 
+plot(Ho,He)
 ```
+We can see that the expected heterogeneity is very close to the one finally observed
+
+## Compare, overall, the results you obtained for the SNP database with those you obtained for the STR database. What differences do you observe between these two types of genetic markers?
 
