@@ -1,0 +1,77 @@
+---
+title: "BSG-MDS Practical 2 Statistical Genetics"
+author: "Biel Caballero and Gerard Gomez"
+date: "07/11/2023, submission deadline 14/11/2023"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r,echo=FALSE}
+library(data.table)
+library(genetics)
+library(HardyWeinberg)
+```
+
+#Hardy Weinberg Equilibrium
+
+##Create dataset
+```{r}
+data<-fread("TSIChr22v4.raw", header = TRUE)
+genetic_data<-data[,-c(1:6)]
+```
+
+### 1. How many variants are there in this database? What percentage of the data is missing?
+
+```{r}
+
+```
+
+### 2. Calculate the percentage of monomorphic variants. Exclude all monomorphics from the database for all posterior computations of the practical. How many variants do remain in your database?
+
+```{r}
+
+```
+
+### 3. Extract polymorphism rs587756191_T from the data, and determine its genotype counts. Apply a chi-square test for Hardy-Weinberg equilibrium, with and without continuity correction. Also try an exact test, and a permutation test. You can use thee functions HWChisq, HWExact and HWPerm for this purpose. Do you think this variant is in equilibrium? Argue your answer.
+
+```{r}
+
+```
+
+### 4. Determine the genotype counts for all polymorphic variants, and store them in a p × 3 matrix.
+
+```{r}
+
+```
+
+### 5. Apply an exact test for Hardy-Weinberg equilibrium to each SNP. You can use function HWExactStats for fast computation. What is the percentage of significant SNPs (use α = 0.05)? Is this the number of markers that you would expect to be out of equilibrium by the effect of chance alone?
+
+```{r}
+
+```
+
+### 6. Which SNP is most significant according to the exact test results? Give its genotype counts. In which sense is this genotypic composition unusual?
+
+```{r}
+
+```
+
+### 7. Compute the inbreeding coefficient (f) for each SNP, and make a histogram of f. You can use function HWf for this purpose. Give descriptive statistics (mean, standard deviation, etc) of f calculated over the set of SNPs. What distribution do you expect f to follow theoretically? Use a probability plot to confirm your idea.
+
+```{r}
+
+```
+
+### 8. Apply the exact test for HWE to each SNP, using different significant levels. Report the number and percentage of significant variants using an exac test for HWE with α = 0.10, 0.05, 0.01 and 0.001. State your conclusions.
+
+```{r}
+
+```
+
+
+
+
+
+
+
