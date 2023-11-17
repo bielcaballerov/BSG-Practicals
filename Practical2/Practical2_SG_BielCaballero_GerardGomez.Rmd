@@ -18,31 +18,61 @@ library(HardyWeinberg)
 ##Create dataset
 ```{r}
 data<-fread("TSIChr22v4.raw", header = TRUE)
-genetic_data<-data[,-c(1:6)]
+geneticData <- as.data.frame(data[,c(-1:-6)])
 ```
 
 ### 1. How many variants are there in this database? What percentage of the data is missing?
 
 ```{r}
-
+print(paste0("There are ",ncol(geneticData), " varaints"))
+sum(is.na(data))
+print("No data is missing")
 ```
 
 ### 2. Calculate the percentage of monomorphic variants. Exclude all monomorphics from the database for all posterior computations of the practical. How many variants do remain in your database?
 
 ```{r}
+monomorphicVariants <- c()
+for(i in 1:ncol(geneticData)){
+  if(length(unique(geneticData[,i])) == 1){
+    monomorphicVariants <- append(monomorphicVariants,i)
+  }
+}
+print(paste0("The parcentage of monomorphic variants are ", length(monomorphicVariants)/ncol(geneticData)))
 
+noMonomorphic <- geneticData[,-monomorphicVariants]
 ```
 
 ### 3. Extract polymorphism rs587756191_T from the data, and determine its genotype counts. Apply a chi-square test for Hardy-Weinberg equilibrium, with and without continuity correction. Also try an exact test, and a permutation test. You can use thee functions HWChisq, HWExact and HWPerm for this purpose. Do you think this variant is in equilibrium? Argue your answer.
 
 ```{r}
+library(HardyWeinberg)
+rs587756191_T <- noMonomorphic[,"rs587756191_T"]
 
+counts <- table(rs587756191_T)
+
+HWChisq(c(AA = 106,AB = 1,BB = 0))
+```
+
+```{r}
+HWExact(c(AA = 106,AB = 1,BB = 0))
+```
+
+```{r}
+HWPerm(c(AA = 106,AB = 1,BB = 0))
 ```
 
 ### 4. Determine the genotype counts for all polymorphic variants, and store them in a p × 3 matrix.
 
 ```{r}
-
+polymorphic <- matrix(nrow = ncol(noMonomorphic),ncol = 3)
+for(i in 1:ncol(noMonomorphic)){
+  tab = table(noMonomorphic[,i])
+  na = names(tab)
+  for(n in na){
+    polymorphic[i,as.numeric(n)+1] <- tab[n]
+  }
+} 
 ```
 
 ### 5. Apply an exact test for Hardy-Weinberg equilibrium to each SNP. You can use function HWExactStats for fast computation. What is the percentage of significant SNPs (use α = 0.05)? Is this the number of markers that you would expect to be out of equilibrium by the effect of chance alone?
