@@ -1,0 +1,115 @@
+---
+title: "BSG-MDS Practical 3 Statistical Genetics"
+author: "Biel Caballero and Gerard Gomez"
+date: "07/11/2023, submission deadline 14/11/2023"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r,echo=FALSE}
+library(genetics)
+library(HardyWeinberg)
+```
+
+#Linkage Disequilibrium
+
+
+```{r}
+
+```
+
+### 1. Load the FOXP2.dat file into the R environment. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
+
+```{r}
+
+```
+
+### 2. Using the function LD from the genetics package, compute the LD statistic D for the SNPs rs34684677 and rs2894715 of the database. Is there significant association between the alleles of these two SNPs?
+
+```{r}
+
+```
+
+### 3. Given your previous estimate of D for SNPs rs34684677 and rs2894715, infer the haplotype frequencies. Which haplotype is the most common?
+
+```{r}
+
+```
+
+### 4.  Determine the genotype counts for each SNP. For how many variants do you reject Hardy-Weinberg equilibrium using an ordinary chi-square test without continuity correction? Is this what you would expect by chance? (hint: you can read the .bim in R in order to determine the alleles of each SNP, and use function MakeCounts from the HardyWeinberg package to create a matrix of genotype counts).
+
+```{r}
+
+```
+
+### 5.  Compute the LD for all the marker pairs in this data base, using the LD function of the packages genetics. Be prepared that this make take a few minutes. Extract the R2 statistics and make an LD heatmap (hint: you can use the command image) using the R2 statistic.
+
+```{r}
+
+```
+
+### 6. Make another heatmap obtained by filtering out all variants with a MAF below 0.35, and redoing the computations to obtain the R2 statistics in R. Can you explain any differences observed between the two heatmaps?
+
+```{r}
+
+```
+
+### 7.  Compute a distance matrix with the distance in base pairs between all possible pairs of
+SNPs, using the basepair position of each SNP given in the .bim file. Make a plot of R’s R2
+statistics against the distance (expressed as the number of basepairs) between the markers.
+Comment on your results.
+
+```{r}
+
+```
+
+
+# Haplotype estimation
+
+### 1. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
+
+```{r}
+
+```
+
+### 2. Assuming that all SNPs are bi-allelic, how many haplotypes can theoretically be found for this data set?
+
+```{r}
+
+```
+
+### 3. Estimate haplotype frequencies using the haplo.em function that you will find in the haplo.stats package. How many haplotypes do you find? List the estimated probabilities in decreasing order. Which haplotype number is the most common?
+
+```{r}
+
+```
+
+### 4. Remove all genetic variants that have a minor allele frequency below 0.10 from the database, and re-run haplo.em. How does this affect the number of haplotypes? Comment on your results.
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
