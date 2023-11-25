@@ -70,26 +70,80 @@ Comment on your results.
 ### 1. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
 
 ```{r}
-
+APOE <- read.table("APOE/APOE/APOE.dat",header = T,row.names = 1)
+print(paste0("There are ",nrow(APOE)," individuals in the dataset"))
+print(paste0("There are ",ncol(APOE)," SNPs in the dataset"))
+print(paste0("A ", sum(is.na(APOE))/(107*162)*100, " parcent of the data is missing"))
 ```
 
 ### 2. Assuming that all SNPs are bi-allelic, how many haplotypes can theoretically be found for this data set?
 
 ```{r}
-
+print(paste0("There can theoretically be ",2^(ncol(APOE)-1)," haplotypes"))
 ```
 
 ### 3. Estimate haplotype frequencies using the haplo.em function that you will find in the haplo.stats package. How many haplotypes do you find? List the estimated probabilities in decreasing order. Which haplotype number is the most common?
 
 ```{r}
+library(haplo.stats)
+geno <- data.frame(row.names = row.names(APOE))
+for(i in 1:ncol(APOE)){
+  geno <- cbind(geno,substr(APOE[,i],1,1),substr(APOE[,i],3,3))
+}
+geno <- as.matrix(geno)
 
+snpts <- colnames(APOE)
+HaploEM <- haplo.em(geno,locus.label = snpts)
+
+print(paste0("We found ", length(HaploEM$hap.prob), " different haplotypes"))
+```
+```{r}
+probs <- sort(HaploEM$hap.prob,decreasing = T)
+probs
+```
+```{r}
+print(paste0("The most common haplotype number is ", which.max(HaploEM$hap.prob)))
 ```
 
 ### 4. Remove all genetic variants that have a minor allele frequency below 0.10 from the database, and re-run haplo.em. How does this affect the number of haplotypes? Comment on your results.
 
 ```{r}
-
+under0.1 <- function(x){
+  tbl <- table(x)
+  tbl <- tbl/sum(tbl)
+  names <- names(tbl)[tbl>0.1]
+  return(!x%in%names)
+}
+x <- apply(as.matrix(APOE), MARGIN = 2,FUN=under0.1)
+APOE2 <- APOE
+APOE2[x] <- NA
+APOE2 <- na.omit(APOE2)
 ```
+
+```{r}
+geno <- data.frame(row.names = row.names(APOE2))
+for(i in 1:ncol(APOE2)){
+  geno <- cbind(geno,substr(APOE2[,i],1,1),substr(APOE2[,i],3,3))
+}
+geno <- as.matrix(geno)
+
+snpts <- colnames(APOE2)
+HaploEM <- haplo.em(geno,locus.label = snpts)
+
+print(paste0("We found ", length(HaploEM$hap.prob), " different haplotypes"))
+```
+We can see a reduction from 34 to 18 different haplotypes by just removing those genetic variants that had a frequency of under 0.1. This is a reduction of 47% of the haplotypes that we had.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
