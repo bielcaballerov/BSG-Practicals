@@ -3,74 +3,192 @@ title: "BSG-MDS Practical 3 Statistical Genetics"
 author: "Biel Caballero and Gerard Gomez"
 date: "07/11/2023, submission deadline 14/11/2023"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
-```{r,echo=FALSE}
+```{r, echo=FALSE}
 library(genetics)
 library(HardyWeinberg)
 ```
 
-#Linkage Disequilibrium
-
-
-```{r}
-
-```
+# Linkage Disequilibrium
 
 ### 1. Load the FOXP2.dat file into the R environment. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
 
 ```{r}
-
+FOXP2_data <- read.table("FOXP2/FOXP2.dat", header = TRUE)
+FOXP2_data <- FOXP2_data[,-1]
+dim(FOXP2_data)
+totalcells <- prod(dim(FOXP2_data)) 
+missingcells <- sum(is.na(FOXP2_data))
+(missingcells * 100)/(totalcells) 
 ```
+There are 104 individuals and 543 SNPs in this database. The percentage of missing data is 0%.
 
 ### 2. Using the function LD from the genetics package, compute the LD statistic D for the SNPs rs34684677 and rs2894715 of the database. Is there significant association between the alleles of these two SNPs?
 
 ```{r}
-
+gen1<-as.list(FOXP2_data["rs34684677"])
+g1<-genotype(gen1$rs34684677)
+gen2<-as.list(FOXP2_data["rs2894715"])
+g2<-genotype(gen2$rs2894715)
+ld<-LD(g1,g2)
+ld
 ```
+There is no significant association between the alleles of these two SNPs, as the D' is close to 1 indicating high LD and the value of D is lower than 0, meaning that there is repulsion.
 
 ### 3. Given your previous estimate of D for SNPs rs34684677 and rs2894715, infer the haplotype frequencies. Which haplotype is the most common?
 
 ```{r}
+D <- -0.05493703
+ 
+pG <- (length(which(g1=="G/G"))*2+length(which(g1=="G/T")))/(2*length(g1))
+pT <- (length(which(g1=="T/T"))*2+length(which(g1=="G/T")))/(2*length(g1))
+qG <- (length(which(g2=="G/G"))*2+length(which(g2=="T/G")))/(2*length(g1))
+qT <- (length(which(g2=="T/T"))*2+length(which(g2=="T/G")))/(2*length(g1))
 
+hGG <- pG * qG + D
+hGT <- pG * qT - D
+hTG <- pT * qG - D
+hTT <- pT * qT + D
+
+print(c("hGG =", round(hGG,3), "hGT =", round(hGT,3), "hTG =", round(hTG,3), "hTT =", round(hTT,3)))
 ```
+The haplotype frequencies are the following:  
+- hGG = 0.227  
+- hGT = 0.61  
+- hTG = 0.11  
+- hTT = 0.054  
 
-### 4.  Determine the genotype counts for each SNP. For how many variants do you reject Hardy-Weinberg equilibrium using an ordinary chi-square test without continuity correction? Is this what you would expect by chance? (hint: you can read the .bim in R in order to determine the alleles of each SNP, and use function MakeCounts from the HardyWeinberg package to create a matrix of genotype counts).
+### 4.  Determine the genotype counts for each SNP. For how many variants do you reject Hardy-Weinberg equilibrium using an ordinary chi-square test without continuity correction? Is this what you would expect by chance? (hint: you can read the FOXP2.bim in R in order to determine the alleles of each SNP, and use function MakeCounts from the HardyWeinberg package to create a matrix of genotype counts).
 
 ```{r}
-
+suppressWarnings({
+c<-0
+for (snp in 1:length(FOXP2_data)){
+  x<-table(FOXP2_data[,snp])
+  if (length(x)==3){
+    xn<-c(x[[1]],x[[2]],x[[3]])
+    names(xn)<-c(gsub("/","",names(x)[1]),gsub("/","",names(x)[2]),gsub("/","",names(x)[3]))
+    chi<-HWChisq(xn, cc= 0, verbose = FALSE)
+    if (chi$pval<0.05){
+      c<-c+1
+    }
+  }
+  else{
+    xn<-c(x[[1]],x[[2]],0)
+    names(xn)<-c(gsub("/","",names(x)[1]),gsub("/","",names(x)[2]),"NN")
+    chi<-HWChisq(xn, cc= 0, verbose = FALSE)
+    if (chi$pval<0.05){
+      c<-c+1
+    }
+  }
+  
+}
+c
+})
 ```
+The number of variants that reject Hardy-Weinberg equilibrium is 33. This is not what we would expect by chance, but there might be some other factors such as natural selection or genetic drift that can be forcing it to have such a high amount of rejection of HWE.
 
 ### 5.  Compute the LD for all the marker pairs in this data base, using the LD function of the packages genetics. Be prepared that this make take a few minutes. Extract the R2 statistics and make an LD heatmap (hint: you can use the command image) using the R2 statistic.
 
 ```{r}
-
+ld_matrix <- matrix(NA, ncol(FOXP2_data), ncol(FOXP2_data))
+ld_matrix_r2 <- matrix(NA, ncol(FOXP2_data), ncol(FOXP2_data))
+for (i in 1:(ncol(FOXP2_data) - 1)) {
+  for (j in (i + 1):ncol(FOXP2_data)) {
+    gen1<-as.list(FOXP2_data[i])
+    gen2<-as.list(FOXP2_data[j])
+    g1<-genotype(gen1[[1]])
+    g2<-genotype(gen2[[1]])
+    ld_result <- LD(g1, g2)
+    ld_matrix[i, j] <- ld_result$`R^2`
+    ld_matrix_r2[i, j] <- ld_result$`R^2`
+    ld_matrix_r2[j, i] <- ld_result$`R^2`
+  }
+}
+image(ld_matrix, main = "LD Heatmap (R2)", xlab = "Marker Pairs", ylab = "Marker Pairs")
 ```
 
 ### 6. Make another heatmap obtained by filtering out all variants with a MAF below 0.35, and redoing the computations to obtain the R2 statistics in R. Can you explain any differences observed between the two heatmaps?
 
 ```{r}
+FOXP2_data_fact<-lapply(FOXP2_data, as.factor)
+FOXP2_data_num<-lapply(FOXP2_data_fact, as.numeric)
+c<-0
+indices<-c()
+for (x in 1:ncol(FOXP2_data)){
+  #genotype count
+  if (length(unique(FOXP2_data_num[[x]]))==3){
+    nAA<-sum(FOXP2_data_num[[x]]==1)
+    nAB<-sum(FOXP2_data_num[[x]]==2)
+    nBB<-sum(FOXP2_data_num[[x]]==3)
+  }
+  else{
+    nAA<-sum(FOXP2_data_num[[x]]==1)
+    nAB<-sum(FOXP2_data_num[[x]]==2)
+    nBB<-0
+  }
+  #allele probabilities
+  pA<-(nAA+1/2*nAB)/102
+  pB<-(nBB+1/2*nAB)/102
+  
+  #MAF
+  maf<-min(pA,pB)
+  if (maf>=0.35){
+    indices <- c(indices, x)
+    c<-c+1
+  }
+}
+FOXP2_data_maf <- FOXP2_data[, indices]
 
+ld_matrix_maf <- matrix(NA, ncol(FOXP2_data_maf), ncol(FOXP2_data_maf))
+
+for (i in 1:(ncol(FOXP2_data_maf) - 1)) {
+  for (j in (i + 1):ncol(FOXP2_data_maf)) {
+    gen1<-as.list(FOXP2_data_maf[i])
+    gen2<-as.list(FOXP2_data_maf[j])
+    g1<-genotype(gen1[[1]])
+    g2<-genotype(gen2[[1]])
+    ld_result <- LD(g1, g2)
+    ld_matrix_maf[i, j] <- ld_result$`R^2`
+  }
+}
+image(ld_matrix_maf, main = "LD Heatmap (R2)", xlab = "Marker Pairs", ylab = "Marker Pairs")
 ```
+The main differences between both heatmaps is that in the heatmap using all SNPs, the higher values of the R2 statistics lay between 0.4 and 0.6 while removing those SNPs with MAF below 0.35 gives us a heatmap where the higher values of the R2 statistics lay between 0.4 and 1. In average we will obtain a higher R2 statistics value in the second heatmap than in the first one.
 
-### 7.  Compute a distance matrix with the distance in base pairs between all possible pairs of
-SNPs, using the basepair position of each SNP given in the .bim file. Make a plot of R’s R2
-statistics against the distance (expressed as the number of basepairs) between the markers.
-Comment on your results.
+### 7.  Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs, using the basepair position of each SNP given in the FOXP2.bim file. Make a plot of R’s R2 statistics against the distance (expressed as the number of basepairs) between the markers. Comment on your results.
 
 ```{r}
+data <- read.table("FOXP2/FOXP2.bim")
 
+snp_names <- data$V2
+snp_positions <- data$V4
+
+num_snps <- length(snp_names)
+distance_matrix <- matrix(0, nrow = num_snps, ncol = num_snps)
+
+for (i in 1:num_snps) {
+  for (j in 1:num_snps) {
+    distance_matrix[i, j] <- abs(snp_positions[i] - snp_positions[j])
+  }
+}
+
+rownames(distance_matrix) <- snp_names
+colnames(distance_matrix) <- snp_names
+
+plot(distance_matrix,ld_matrix_r2, main = "R2 statistics vs distance", xlab = "Distance in bp", ylab = expression(R^2))
 ```
-
+This plot shows that while the distance between each pair is below 100000bp, the R2 statistics range between 0 and 1, but as the distance crosses this threshold, the R2 statistics is closer to 0.
 
 # Haplotype estimation
 
 ### 1. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
 
 ```{r}
-APOE <- read.table("APOE/APOE/APOE.dat",header = T,row.names = 1)
+APOE <- read.table("APOE/APOE.dat",header = T,row.names = 1)
 print(paste0("There are ",nrow(APOE)," individuals in the dataset"))
 print(paste0("There are ",ncol(APOE)," SNPs in the dataset"))
 print(paste0("A ", sum(is.na(APOE))/(107*162)*100, " parcent of the data is missing"))
@@ -133,35 +251,6 @@ HaploEM <- haplo.em(geno,locus.label = snpts)
 print(paste0("We found ", length(HaploEM$hap.prob), " different haplotypes"))
 ```
 We can see a reduction from 34 to 18 different haplotypes by just removing those genetic variants that had a frequency of under 0.1. This is a reduction of 47% of the haplotypes that we had.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
