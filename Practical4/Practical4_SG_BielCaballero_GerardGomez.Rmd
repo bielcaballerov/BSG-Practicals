@@ -1,0 +1,19 @@
+---
+title: "BSG-MDS Practical 3 Statistical Genetics"
+author: "Biel Caballero and Gerard Gomez"
+date: "07/11/2023, submission deadline 14/11/2023"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, echo=FALSE}
+
+```
+
+# Population substructure
+
+```{r}
+
+```
+
