@@ -8,12 +8,89 @@ output:
 ---
 
 ```{r, echo=FALSE}
-
+library(MASS)
+library(data.table)
 ```
 
 # Population substructure
 
+### 1. How many variants are there in this database? What percentage of the data is missing?
 ```{r}
 
 ```
+
+### 2. Compute the Manhattan distance matrix between the individuals (which is identical to the Minkowsky distance with parameter lambda = 1) using R function dist. Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report.
+```{r}
+
+```
+
+### 3. How does the Manhattan distance relate to the allele sharing distance?
+```{r}
+
+```
+
+### 4. Apply metric multidimensional scaling (cmdscale) with two dimensions, k = 2, using the Manhattan distance matrix and include the map in your report. Do you think the data come from one homogeneous human population? If not, how many subpopulations do you think the data might come from, and how many individuals pertain to each suppopulation?
+```{r}
+
+```
+
+### 5. What is the goodness-of-fit of the two-dimensional approximation to your distance matrix? Explain which criterium you have used.
+```{r}
+
+```
+
+### 6. Make a plot of the estimated distances (according to your two-dimensional map of individuals) versus the observed distances. What do you observe? Regress estimated distances on observed distances and report the coefficient of determination of the regression (you can use the function lm).
+```{r}
+
+```
+
+### 7. We now try a (two-dimensional) non-metric multidimensional scaling using the isoMDs function that you will find in MASS library. We use a random initial configuration and, for the sake of reproducibility, make this random initial configuration with the instructions: set.seed(12345) and init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE) where n represents the sample size and m represents the dimensionality of the solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
+```{r}
+
+```
+
+### 8. Try some additional runs of the two-dimensional isoMDS with different initial configurations. Make a plot of the solutions and report the STRESS for each of them. What do you observe?
+```{r}
+
+```
+
+### 9. Compute the stress for a 1, 2, 3, . . . , 50-dimensional solution. How many dimensions are necessary to obtain a good representation with a stress below 10? Make a plot of the stress against the number of dimensions.
+```{r}
+
+```
+
+### 10. Run the two-dimensional isoMDS a hundred times, each time using a different random initial configuration using the instructions above. Report the stress of the best and the worse run, and plot the corresponding maps. Compare your results to the metric MDS and comment on your findings.
+```{r}
+
+```
+
+### 11. Compute the correlation matrix between the first two dimensions of the metric MDS and the two-dimensional solution of your best non-metric MDS. Comment your findings.
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
