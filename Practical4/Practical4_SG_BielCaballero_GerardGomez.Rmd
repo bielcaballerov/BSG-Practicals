@@ -10,38 +10,63 @@ output:
 ```{r, echo=FALSE}
 library(MASS)
 library(data.table)
+chr21 = fread("Chr21.dat")
+data <- chr21[,7:ncol(chr21)]
 ```
 
 # Population substructure
 
 ### 1. How many variants are there in this database? What percentage of the data is missing?
 ```{r}
-
+dimensions = dim(chr21)
+print(paste0("There are ",dimensions[2]-6," variants"))
+print(paste0("A total of ", sum(is.na(chr21))/(dimensions[1]*dimensions[2]), " percent of the data is missing"))
 ```
 
 ### 2. Compute the Manhattan distance matrix between the individuals (which is identical to the Minkowsky distance with parameter lambda = 1) using R function dist. Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report.
 ```{r}
-
+dist <- dist(chr21[,7:ncol(chr21)],method = "manhattan")
+dist <- as.matrix(dist)
+dist[1:5,1:5]
 ```
 
 ### 3. How does the Manhattan distance relate to the allele sharing distance?
-```{r}
+The lower the distance the more alleles are shared
 
-```
 
 ### 4. Apply metric multidimensional scaling (cmdscale) with two dimensions, k = 2, using the Manhattan distance matrix and include the map in your report. Do you think the data come from one homogeneous human population? If not, how many subpopulations do you think the data might come from, and how many individuals pertain to each suppopulation?
 ```{r}
-
+cmd.chr21 <- cmdscale(dist,k=2,eig = TRUE)
+plot(cmd.chr21$points)
 ```
+  
+We can clearly see that the data doesn't come from a homogeneous population. We can see that there are 2 subpopulations.
+
+```{r}
+subpop <- numeric(nrow(data))
+subpop[cmd.chr21$points[,1]>0] <- 1
+print(paste0("We can say that one subpopulation has a size of ", sum(subpop==1), "and subpopulation 2 has a size of ", sum(subpop==0)))
+```
+
 
 ### 5. What is the goodness-of-fit of the two-dimensional approximation to your distance matrix? Explain which criterium you have used.
 ```{r}
-
+cmd.chr21$GOF
 ```
 
 ### 6. Make a plot of the estimated distances (according to your two-dimensional map of individuals) versus the observed distances. What do you observe? Regress estimated distances on observed distances and report the coefficient of determination of the regression (you can use the function lm).
 ```{r}
+cdm.dist <- as.matrix(dist(cmd.chr21$points,method = "manhattan"))
 
+dist.cmds <- cdm.dist[lower.tri(cdm.dist)]
+dist.chr21 <- dist[lower.tri(dist)]
+
+mod <- lm(dist.cmds~dist.chr21)
+
+plot(dist.chr21,dist.cmds)
+abline(mod)
+
+print(paste0("The coefficient of detrmination of the generated linear model is ",summary(mod)$r.squared))
 ```
 
 ### 7. We now try a (two-dimensional) non-metric multidimensional scaling using the isoMDs function that you will find in MASS library. We use a random initial configuration and, for the sake of reproducibility, make this random initial configuration with the instructions: set.seed(12345) and init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE) where n represents the sample size and m represents the dimensionality of the solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
@@ -68,29 +93,3 @@ library(data.table)
 ```{r}
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
