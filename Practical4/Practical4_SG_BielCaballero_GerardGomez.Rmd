@@ -51,17 +51,16 @@ print(paste0("We can say that one subpopulation has a size of ", sum(subpop==1),
 
 ### 5. What is the goodness-of-fit of the two-dimensional approximation to your distance matrix? Explain which criterium you have used.
 ```{r}
-cmd.chr21$eig
 cmd.chr21$GOF
 ```
-As not all the eigenvalues are positive, we can see the last eigenvalue is negative, causes the goodnes of fit to not be equal. 
+As we obtain low values of goodness of fit it implies the cmd has a good fit. The criterium used is the STRESS.
 
 ### 6. Make a plot of the estimated distances (according to your two-dimensional map of individuals) versus the observed distances. What do you observe? Regress estimated distances on observed distances and report the coefficient of determination of the regression (you can use the function lm).
 ```{r}
 cdm.dist <- as.matrix(dist(cmd.chr21$points,method = "manhattan"))
 
-dist.cmds <- cdm.dist[lower.tri(cdm.dist)]
-dist.chr21 <- dist[lower.tri(dist)]
+dist.cmds <- cdm.dist[upper.tri(cdm.dist)]
+dist.chr21 <- dist[upper.tri(dist)]
 
 plot(dist.chr21,dist.cmds,xlab="Observed distances",ylab="Estimated distances")
 
@@ -69,7 +68,7 @@ mod <- lm(dist.cmds~dist.chr21)
 print(paste0("The coefficient of detrmination of the generated linear model is ",summary(mod)$r.squared))
 ```
 
-Looking at the plot we can see that there are 2 clear clusters. These two clustres are separed mainly by the Esttimated distances.
+Looking at the plot we can see that there are 2 clear clusters. These two clustres are separed mainly by the Estimated distances. This two clusters are generated because close points are going to have a lower distance that highly seppared points. We can see that the observed distances also respect this distances, as data from differnt clusters are always plotted further away, but the estimated makes it more clear.
 
 ### 7. We now try a (two-dimensional) non-metric multidimensional scaling using the isoMDs function that you will find in MASS library. We use a random initial configuration and, for the sake of reproducibility, make this random initial configuration with the instructions: set.seed(12345) and init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE) where n represents the sample size and m represents the dimensionality of the solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
 ```{r}
@@ -102,24 +101,23 @@ for (m in 1:50){
   stress <- c(stress, nonmms$stress)
 }
 plot(stress, main = "Stress for each dimension")
-which(stress<10)[1]
+print(paste0('The number of dimensions necessary to obtain a good representation is',which(stress<10)[1] ,'dimensions'))
 ```
-The number of dimensions necessary to obtain a good representation is 22 dimensions.
 
 ### 10. Run the two-dimensional isoMDS a hundred times, each time using a different random initial configuration using the instructions above. Report the stress of the best and the worse run, and plot the corresponding maps. Compare your results to the metric MDS and comment on your findings.
 ```{r}
 stress_100<-c()
 points_100<-list()
-for (x in 1:50){
+for (x in 1:100){
   init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE)
   nonmms<-isoMDS(dist,y=init,k=m, trace = FALSE)
   stress_100<-c(stress_100,nonmms$stress)
   points_100[[x]]<-nonmms$points
 }
-which(stress==min(stress))
-which(stress==max(stress))
-best_run<-points_100[[which(stress==min(stress))]]
-worst_run<-points_100[[which(stress==max(stress))]]
+print(paste0('The worst run is run ',which(stress_100==min(stress_100))))
+print(paste0('The best run is run ',which(stress_100==max(stress_100))))
+best_run<-points_100[[which(stress_100==min(stress_100))]]
+worst_run<-points_100[[which(stress_100==max(stress_100))]]
 plot(best_run[,1],best_run[,2])
 plot(worst_run[,1],worst_run[,2])
 plot(cmd.chr21$points[,1],cmd.chr21$points[,2])
@@ -128,6 +126,7 @@ plot(cmd.chr21$points[,1],cmd.chr21$points[,2])
 
 ### 11. Compute the correlation matrix between the first two dimensions of the metric MDS and the two-dimensional solution of your best non-metric MDS. Comment your findings.
 ```{r}
-corr_matrix<-cbind(cmd.chr21$points,maximum_points[,1:2])
-round(cor(corr_matrix),digits=2)
+corr_matrix<-cbind(cmd.chr21$points,best_run[,1:2])
+correlationMat <- cor(corr_matrix)
+correlationMat
 ```
