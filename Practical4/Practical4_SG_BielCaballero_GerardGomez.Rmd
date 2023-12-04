@@ -73,25 +73,61 @@ Looking at the plot we can see that there are 2 clear clusters. These two clustr
 
 ### 7. We now try a (two-dimensional) non-metric multidimensional scaling using the isoMDs function that you will find in MASS library. We use a random initial configuration and, for the sake of reproducibility, make this random initial configuration with the instructions: set.seed(12345) and init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE) where n represents the sample size and m represents the dimensionality of the solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
 ```{r}
+set.seed(12345)
+m<-2 #as there are two subpopulations
+n<-dimensions[1]
+init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE)
+nonmms<-isoMDS(dist,y=init,k=m, trace = FALSE)
 
+plot(nonmms$points[,1],nonmms$points[,2], xlab = "DIM1", ylab = "DIM2")
 ```
+The plot confirms that the data come from one homogeneous population, as there can not be seen any separation of the population.
 
 ### 8. Try some additional runs of the two-dimensional isoMDS with different initial configurations. Make a plot of the solutions and report the STRESS for each of them. What do you observe?
 ```{r}
-
+for (x in 1:10){
+  init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE)
+  nonmms<-isoMDS(dist,y=init,k=m, trace = FALSE)
+  plot(nonmms$points[,1],nonmms$points[,2], xlab = "DIM1", ylab = "DIM2", main = paste0('Stress = ',round(nonmms$stress,3), ', Plot number ',x))
+}
 ```
+Here we can observe that when the stress is low, there can be seen separation of the population into subpopulations. In conclusion, a low stress value implies that the population is divided into subpopulations.
 
 ### 9. Compute the stress for a 1, 2, 3, . . . , 50-dimensional solution. How many dimensions are necessary to obtain a good representation with a stress below 10? Make a plot of the stress against the number of dimensions.
 ```{r}
-
+stress <- c()
+for (m in 1:50){
+  init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE)
+  nonmms<-isoMDS(dist,y=init,k=m, trace = FALSE)
+  stress <- c(stress, nonmms$stress)
+}
+plot(stress, main = "Stress for each dimension")
+which(stress<10)[1]
 ```
+The number of dimensions necessary to obtain a good representation is 22 dimensions.
 
 ### 10. Run the two-dimensional isoMDS a hundred times, each time using a different random initial configuration using the instructions above. Report the stress of the best and the worse run, and plot the corresponding maps. Compare your results to the metric MDS and comment on your findings.
 ```{r}
-
+stress_100<-c()
+points_100<-list()
+for (x in 1:50){
+  init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE)
+  nonmms<-isoMDS(dist,y=init,k=m, trace = FALSE)
+  stress_100<-c(stress_100,nonmms$stress)
+  points_100[[x]]<-nonmms$points
+}
+which(stress==min(stress))
+which(stress==max(stress))
+best_run<-points_100[[which(stress==min(stress))]]
+worst_run<-points_100[[which(stress==max(stress))]]
+plot(best_run[,1],best_run[,2])
+plot(worst_run[,1],worst_run[,2])
+plot(cmd.chr21$points[,1],cmd.chr21$points[,2])
 ```
+
 
 ### 11. Compute the correlation matrix between the first two dimensions of the metric MDS and the two-dimensional solution of your best non-metric MDS. Comment your findings.
 ```{r}
-
+corr_matrix<-cbind(cmd.chr21$points,maximum_points[,1:2])
+round(cor(corr_matrix),digits=2)
 ```
