@@ -51,8 +51,10 @@ print(paste0("We can say that one subpopulation has a size of ", sum(subpop==1),
 
 ### 5. What is the goodness-of-fit of the two-dimensional approximation to your distance matrix? Explain which criterium you have used.
 ```{r}
+cmd.chr21$eig
 cmd.chr21$GOF
 ```
+As not all the eigenvalues are positive, we can see the last eigenvalue is negative, causes the goodnes of fit to not be equal. 
 
 ### 6. Make a plot of the estimated distances (according to your two-dimensional map of individuals) versus the observed distances. What do you observe? Regress estimated distances on observed distances and report the coefficient of determination of the regression (you can use the function lm).
 ```{r}
@@ -61,13 +63,13 @@ cdm.dist <- as.matrix(dist(cmd.chr21$points,method = "manhattan"))
 dist.cmds <- cdm.dist[lower.tri(cdm.dist)]
 dist.chr21 <- dist[lower.tri(dist)]
 
+plot(dist.chr21,dist.cmds,xlab="Observed distances",ylab="Estimated distances")
+
 mod <- lm(dist.cmds~dist.chr21)
-
-plot(dist.chr21,dist.cmds)
-abline(mod)
-
 print(paste0("The coefficient of detrmination of the generated linear model is ",summary(mod)$r.squared))
 ```
+
+Looking at the plot we can see that there are 2 clear clusters. These two clustres are separed mainly by the Esttimated distances.
 
 ### 7. We now try a (two-dimensional) non-metric multidimensional scaling using the isoMDs function that you will find in MASS library. We use a random initial configuration and, for the sake of reproducibility, make this random initial configuration with the instructions: set.seed(12345) and init <- scale(matrix(runif(m*n),ncol=m),scale=FALSE) where n represents the sample size and m represents the dimensionality of the solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
 ```{r}
