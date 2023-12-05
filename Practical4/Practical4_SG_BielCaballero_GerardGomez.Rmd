@@ -3,8 +3,8 @@ title: "BSG-MDS Practical 3 Statistical Genetics"
 author: "Biel Caballero and Gerard Gomez"
 date: "07/11/2023, submission deadline 14/11/2023"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r, echo=FALSE}
@@ -121,6 +121,7 @@ worst_run<-points_100[[which(stress_100==max(stress_100))]]
 plot(best_run[,1],best_run[,2])
 plot(worst_run[,1],worst_run[,2])
 plot(cmd.chr21$points[,1],cmd.chr21$points[,2])
+print("We can clearly see that the results from the best and the worst run are different from the results of the metric MDS. While the metric MDS has clearly two groups differentiated, the best and worse run have all the points in the same group, in other words we can not see any group differentiation.")
 ```
 
 
@@ -129,4 +130,5 @@ plot(cmd.chr21$points[,1],cmd.chr21$points[,2])
 corr_matrix<-cbind(cmd.chr21$points,best_run[,1:2])
 correlationMat <- cor(corr_matrix)
 correlationMat
+print("From the results of the correlation matrix, we can state that there is no strong correlation (neither positive nor negative) between each pairs, being all correlations lower than 0.01 in the positive case and lower than -0.01 in the negative case.")
 ```
