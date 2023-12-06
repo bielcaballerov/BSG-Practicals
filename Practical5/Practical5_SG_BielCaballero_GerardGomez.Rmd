@@ -1,0 +1,78 @@
+---
+title: "BSG-MDS Practical 3 Statistical Genetics"
+author: "Biel Caballero and Gerard Gomez"
+date: "05/12/2023, submission deadline 12/12/2023"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Population substructure
+
+### 1. Perform the alleles test for this data set. Provide the p-value and the odds ratio and comment on the results.
+```{r}
+df <- matrix(c(112,278,150,206,348	,150),byrow=TRUE,ncol=3)
+colnames(df) <- c("AA","Aa","aa")
+rownames(df) <- c("Cases","Controls")
+df
+
+alleles<-cbind(2*df[,1]+df[,2],2*df[,3]+df[,2])
+colnames(alleles) <- c("A","a")
+fisher.test(alleles)
+```
+The p-value is 0.000231 and the odds ratio is 0.7406221. This means that we accept the alternative hypothesis meaning that the true odds ratio is not equal to 1.
+
+### 2. Test for association using a codominant, a dominant and a recessive model. Provide the p-values for all the tests and comment on the results.
+```{r}
+#Codominant
+codominant <- matrix(c(112,278,150,206,348,150),byrow=TRUE,ncol=3)
+colnames(codominant) <- c("AA","AB","BB")
+rownames(codominant) <- c("Cases","Controls")
+codominant
+
+results<-chisq.test(codominant)
+results
+results$expected
+fisher.test(codominant)
+
+#Dominant
+dominant <- cbind(codominant[,1],codominant[,2]+codominant[,3])
+colnames(dominant) <- c("AA","AB or BB")
+rownames(dominant) <- c("Cases","Control")
+dominant
+results<-chisq.test(dominant)
+results
+results<-chisq.test(codominant, correct = FALSE)
+results
+
+#Recessive
+recessive <- cbind(codominant[,1]+codominant[,2],codominant[,3])
+colnames(recessive) <- c("AA or AB","BB")
+rownames(recessive) <- c("Cases","Control")
+recessive
+results<-chisq.test(recessive)
+results
+fisher.test(recessive)
+```
+
+### 3. Plot the risk of disease as a function of the number of m alleles. Comment on the results. Which model seems most appropriate?
+```{r}
+
+```
+
+### 4. Perform Armitage trend test for this data set. Does the null hypothesis β1 = 0 hold? Comment on your response.
+```{r}
+
+```
+
+### 5. Is there evidence for association of this marker with the disease? Argument your response
+```{r}
+
+```
+
+
+
+
+
+
+
