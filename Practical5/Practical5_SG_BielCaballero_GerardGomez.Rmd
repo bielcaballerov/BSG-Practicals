@@ -7,6 +7,11 @@ output:
   pdf_document: default
 ---
 
+```{r, echo=FALSE}
+library(ggplot2)
+```
+
+
 # Population substructure
 
 ### 1. Perform the alleles test for this data set. Provide the p-value and the odds ratio and comment on the results.
@@ -57,7 +62,45 @@ fisher.test(recessive)
 
 ### 3. Plot the risk of disease as a function of the number of m alleles. Comment on the results. Which model seems most appropriate?
 ```{r}
+#Codominant
+m_alleles <- c("AA", "AB", "BB")
+risk_of_disease <- c(codominant[1,1]/(codominant[1,1]+codominant[1,2]), codominant[1,2]/(codominant[1,2]+codominant[2,2]), codominant[1,3]/(codominant[1,3]+codominant[2,3]))
 
+data <- data.frame(m_alleles, risk_of_disease)
+
+ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x = "Alleles", y = "Risk of Disease") +
+  ggtitle("Risk of Disease vs. Number of M Alleles") +
+  theme_minimal()
+
+
+#Dominant
+m_alleles <- c("AA", "AB", "BB")
+risk_of_disease <- c(dominant[1,1]/(dominant[1,1]+dominant[1,2]), dominant[1,2]/(dominant[1,2]+dominant[2,2]), dominant[1,2]/(dominant[1,2]+dominant[2,2]))
+
+data <- data.frame(m_alleles, risk_of_disease)
+
+ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
+  geom_point() +
+  geom_path() +
+  labs(x = "Alleles", y = "Risk of Disease") +
+  ggtitle("Risk of Disease vs. Number of M Alleles") +
+  theme_minimal()
+
+#Recessive
+m_alleles <- as.factor(c("AA", "AB", "BB"))
+risk_of_disease <- c(recessive[1,1]/(recessive[1,1]+recessive[1,2]), recessive[1,1]/(recessive[1,1]+recessive[2,1]), recessive[1,2]/(recessive[1,2]+recessive[2,2]))
+
+data <- data.frame(m_alleles, risk_of_disease)
+
+ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
+  geom_point() +
+  geom_path() +
+  labs(x = "Alleles", y = "Risk of Disease") +
+  ggtitle("Risk of Disease vs. Number of M Alleles") +
+  theme_minimal()
 ```
 
 ### 4. Perform Armitage trend test for this data set. Does the null hypothesis β1 = 0 hold? Comment on your response.
