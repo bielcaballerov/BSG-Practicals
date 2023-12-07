@@ -68,9 +68,8 @@ risk_of_disease <- c(codominant[1,1]/(codominant[1,1]+codominant[1,2]), codomina
 
 data <- data.frame(m_alleles, risk_of_disease)
 
-ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
+ggplot(data, aes(x = m_alleles, y = risk_of_disease,group = c(1,1,1))) +
+  geom_point() + geom_line() +
   labs(x = "Alleles", y = "Risk of Disease") +
   ggtitle("Risk of Disease vs. Number of M Alleles") +
   theme_minimal()
@@ -82,9 +81,9 @@ risk_of_disease <- c(dominant[1,1]/(dominant[1,1]+dominant[1,2]), dominant[1,2]/
 
 data <- data.frame(m_alleles, risk_of_disease)
 
-ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
+ggplot(data, aes(x = m_alleles, y = risk_of_disease,group = c(1,1,1))) +
   geom_point() +
-  geom_path() +
+  geom_line() +
   labs(x = "Alleles", y = "Risk of Disease") +
   ggtitle("Risk of Disease vs. Number of M Alleles") +
   theme_minimal()
@@ -95,9 +94,9 @@ risk_of_disease <- c(recessive[1,1]/(recessive[1,1]+recessive[1,2]), recessive[1
 
 data <- data.frame(m_alleles, risk_of_disease)
 
-ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
+ggplot(data, aes(x = m_alleles, y = risk_of_disease,group = c(1,1,1))) +
   geom_point() +
-  geom_path() +
+  geom_line() + 
   labs(x = "Alleles", y = "Risk of Disease") +
   ggtitle("Risk of Disease vs. Number of M Alleles") +
   theme_minimal()
