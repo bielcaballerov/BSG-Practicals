@@ -25,7 +25,7 @@ alleles<-cbind(2*df[,1]+df[,2],2*df[,3]+df[,2])
 colnames(alleles) <- c("A","a")
 fisher.test(alleles)
 ```
-The p-value is 0.000231 and the odds ratio is 0.7406221. This means that we accept the alternative hypothesis meaning that the true odds ratio is not equal to 1.
+The p-value is 0.000231 and the odds ratio is 0.7406221. This means that we accept the alternative hypothesis meaning that the true odds ratio is not equal to 1. Therefore we can say that there is a trend in the proportions of the SNP and the Alzheimer's disease.
 
 ### 2. Test for association using a codominant, a dominant and a recessive model. Provide the p-values for all the tests and comment on the results.
 ```{r}
@@ -105,13 +105,24 @@ ggplot(data, aes(x = m_alleles, y = risk_of_disease)) +
 
 ### 4. Perform Armitage trend test for this data set. Does the null hypothesis β1 = 0 hold? Comment on your response.
 ```{r}
+n <- sum(df)
 
+cas <- rep(c(0,1,2), df[1,])
+con <- rep(c(0,1,2), df[2,])
+
+y <- c(rep(1,sum(df[1,])),rep(0,sum(df[2,])))
+x <- c(cas,con)
+
+r <- cor(x,y)
+A <- n*(r^2)
+
+pval <- pchisq(A,df=1,lower.tail = FALSE)
+pval
 ```
+No, the null hypothesis doesn't hold. This means that there is a a trend in the proportions of the SNP and the Alzheimer's disease
 
 ### 5. Is there evidence for association of this marker with the disease? Argument your response
-```{r}
-
-```
+We can say there is a clear associattion between the marker and the disease. This can be clearly seen in the after the allele and Armitage test have been performed, where we got a pvalue lower than 0.05 for both tests, this means that there is a trend in the proportions of the SNP with the Alzheimers 
 
 
 
