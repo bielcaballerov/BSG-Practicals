@@ -3,8 +3,8 @@ title: "BSG-MDS Practical 3 Statistical Genetics"
 author: "Biel Caballero and Gerard Gomez"
 date: "05/12/2023, submission deadline 12/12/2023"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r, echo=FALSE}
@@ -59,6 +59,10 @@ results<-chisq.test(recessive)
 results
 fisher.test(recessive)
 ```
+The results for the Codominant case, show that we reject the null hypothesis that the probability of disease with all the genotypes is the same.  
+The results for the Dominant case, show that we reject the null hypothesis that the probability of disease does not depend on B.  
+The results for the Codominant case, show that we reject the null hypothesis that the probability of disease does not depend on being homozygote BB.  
+
 
 ### 3. Plot the risk of disease as a function of the number of m alleles. Comment on the results. Which model seems most appropriate?
 ```{r}
@@ -90,7 +94,7 @@ ggplot(data, aes(x = m_alleles, y = risk_of_disease,group = c(1,1,1))) +
 
 #Recessive
 m_alleles <- as.factor(c("AA", "AB", "BB"))
-risk_of_disease <- c(recessive[1,1]/(recessive[1,1]+recessive[1,2]), recessive[1,1]/(recessive[1,1]+recessive[2,1]), recessive[1,2]/(recessive[1,2]+recessive[2,2]))
+risk_of_disease <- c(recessive[1,1]/(recessive[1,1]+recessive[1,2]), recessive[1,1]/(recessive[1,1]+recessive[1,2]), recessive[1,2]/(recessive[1,2]+recessive[2,2]))
 
 data <- data.frame(m_alleles, risk_of_disease)
 
@@ -101,8 +105,9 @@ ggplot(data, aes(x = m_alleles, y = risk_of_disease,group = c(1,1,1))) +
   ggtitle("Risk of Disease vs. Number of M Alleles") +
   theme_minimal()
 ```
+In these plots we can see the risk of having the disease given the alleles they have in the genotype. The model that seems to be the most appropiate would be the codominant model, because it makes sense regarding the number for each genotype to have these amount of risk of having the disease. The other two plots, have the same probability for AB and BB (in the case of dominant) and AA and AB (in the case of recessive), because we grouped them in the previous exercise as the same outcome, so it was easier to work with.
 
-### 4. Perform Armitage trend test for this data set. Does the null hypothesis β1 = 0 hold? Comment on your response.
+### 4. Perform Armitage trend test for this data set. Does the null hypothesis beta1 = 0 hold? Comment on your response.
 ```{r}
 n <- sum(df)
 
@@ -121,7 +126,7 @@ pval
 No, the null hypothesis doesn't hold. This means that there is a a trend in the proportions of the SNP and the Alzheimer's disease
 
 ### 5. Is there evidence for association of this marker with the disease? Argument your response
-We can say there is a clear associattion between the marker and the disease. This can be clearly seen in the after the allele and Armitage test have been performed, where we got a pvalue lower than 0.05 for both tests, this means that there is a trend in the proportions of the SNP with the Alzheimers 
+We can say there is a clear association between the marker and the disease. This can be clearly seen in the after the allele and Armitage test have been performed, where we got a pvalue lower than 0.05 for both tests, this means that there is a trend in the proportions of the SNP with the Alzheimers 
 
 
 
