@@ -38,9 +38,9 @@ share <- function(col){
 vector_m <- c()
 vector_s <- c()
 numAlleles <- ncol(alleles)
-for(i in 1:nrow(alleles)){
+for(i in 1:(nrow(alleles)-1)){
   ind1 <- alleles[i,]
-  for(j in i+1:nrow(alleles)){
+  for(j in (i+1):nrow(alleles)){
     ind2 <- alleles[j,]
     
     allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
@@ -54,10 +54,6 @@ for(i in 1:nrow(alleles)){
 }
 vector_s[1:5]
 vector_m[1:5]
-
-for(l in 1:ncol(alleles)){
-  x <- share(rbind(ind1,ind2)[,l])
-}
 ```
 
 ## 3. Compute, for each pair of individuals (and report the first 5), the fraction of variants for which the individuals share 0 alleles (p0), and the fraction of variants for which the individuals share 2 alleles (p2). Check if m = 1 − p0 + p2 holds.
@@ -68,9 +64,9 @@ vector_p0 <- c()
 vector_p1 <- c()
 vector_p2 <- c()
 
-for(i in 1:nrow(alleles)){
+for(i in 1:(nrow(alleles)-1)){
   ind1 <- alleles[i,]
-  for(j in i+1:nrow(alleles)){
+  for(j in (i+1):nrow(alleles)){
     ind2 <- alleles[j,]
     
     allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
@@ -89,7 +85,7 @@ for(i in 1:nrow(alleles)){
 ## 4.Plot m against s and plot p0 against p2. Comment on the results.
 
 ```{r}
-par(mfrow = c(2,1))
+par(mfrow = c(1,2))
 plot(vector_m,vector_s)
 plot(vector_p0,vector_p2)
 ```
