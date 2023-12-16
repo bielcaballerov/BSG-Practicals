@@ -38,7 +38,7 @@ share <- function(col){
 vector_m <- c()
 vector_s <- c()
 numAlleles <- ncol(alleles)
-for(i in 1:nrow(alleles)-1){
+for(i in 1:nrow(alleles)){
   ind1 <- alleles[i,]
   for(j in i+1:nrow(alleles)){
     ind2 <- alleles[j,]
