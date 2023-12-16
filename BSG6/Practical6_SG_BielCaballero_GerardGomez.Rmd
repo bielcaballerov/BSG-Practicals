@@ -66,7 +66,7 @@ vector_p2 <- c()
 
 for(i in 1:nrow(alleles)){
   ind1 <- alleles[i,]
-  for(j in i:nrow(alleles)){
+  for(j in i+1:nrow(alleles)){
     ind2 <- alleles[j,]
     
     allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
