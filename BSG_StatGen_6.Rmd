@@ -1,0 +1,120 @@
+---
+title: "BSG Statistical Genetics practical 5"
+author: "Biel and Gerard"
+date: "2023-12-16"
+output: html_document
+---
+
+## 1. Load the YRI06.raw file into the R environment. How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
+
+```{r}
+library(data.table)
+data <- fread("YRI6.raw")
+alleles <- data[,7:ncol(data)]
+dataDim <- dim(alleles)
+
+print(paste0("In there dataset the are ", dataDim[1]," individuals and ", dataDim[2], " SNPs."))
+print(paste0("The parcentage of missing data is ", (sum(is.na(data))/(dataDim[1]*dataDim[2]))*100,"%"))
+```
+
+## 2. Compute, for each pair of individuals (and report the first 5), the mean m of the number of alleles shared and the standard deviation s of the number of alleles shared.
+
+```{r}
+share <- function(col){
+  if(col[1] %in% c(0,2)){
+    if(col[1]==col[2]){
+      return(2)
+    } else if(col[2]==1){
+      return(1)
+    }
+  } else if(col[1]==1){
+    if(col[2] %in% c(0,2)){
+      return(1)
+    } else {return(2)}
+  }
+  return(0)
+}
+
+vector_m <- c()
+vector_s <- c()
+numAlleles <- ncol(alleles)
+for(i in 1:nrow(alleles)-1){
+  ind1 <- alleles[i,]
+  for(j in i+1:nrow(alleles)){
+    ind2 <- alleles[j,]
+    
+    allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
+    mean <- sum(allelesShared)/numAlleles
+    s <- (sum((allelesShared-mean)**2))/(numAlleles-1)
+    
+    vector_s <- append(vector_s,s)
+    vector_m <- append(vector_m,mean)
+    
+  } 
+}
+vector_s[1:5]
+vector_m[1:5]
+
+for(l in 1:ncol(alleles)){
+  x <- share(rbind(ind1,ind2)[,l])
+}
+```
+
+## 3. Compute, for each pair of individuals (and report the first 5), the fraction of variants for which the individuals share 0 alleles (p0), and the fraction of variants for which the individuals share 2 alleles (p2). Check if m = 1 − p0 + p2 holds.
+
+```{r}
+
+vector_p0 <- c()
+vector_p1 <- c()
+vector_p2 <- c()
+
+for(i in 1:nrow(alleles)){
+  ind1 <- alleles[i,]
+  for(j in i+1:nrow(alleles)){
+    ind2 <- alleles[j,]
+    
+    allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
+    
+    vector_0 <- sum(allelesShared == 0)
+    vector_1 <- sum(allelesShared == 1)
+    vector_2 <- sum(allelesShared == 2)
+    
+    vector_p0 <- append(vector_p0,vector_0/numAlleles)
+    vector_p2 <- append(vector_p2,vector_2/numAlleles)
+  } 
+}
+
+```
+
+## 4.Plot m against s and plot p0 against p2. Comment on the results.
+
+```{r}
+par(mfrow = c(2,1))
+plot(vector_m,vector_s)
+plot(vector_p0,vector_p2)
+```
+
+
+## 5. Plot m against s and use the pedigree information of the YRI06.raw file to label the data points in the scatterplot. Recall that column 3 and 4 from the YRI06.raw contain information about the family relationship of the participants. Create two labels: one for individuals that have a parent-offspring relationship and another one for unrelated individuals. Comment on the results.
+
+
+
+
+## 6. Use the package SNPRelate to estimate the IBD probabilities, and plot the probabilities of sharing 0 and 1 IBD alleles (k0 and k1) for all pairs of individuals. Use the pedigree information of the YRI06.raw file to label the data points in the scatterplot (same as before, one colour for parent-offspring relationship and another colour for unrelated individuals).
+
+
+
+## 7. Do you think the family relationships between all individuals were correctly specified?
+
+
+
+
+
+
+
+
+
+
+
+
+
