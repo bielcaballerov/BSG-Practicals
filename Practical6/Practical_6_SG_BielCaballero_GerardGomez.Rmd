@@ -9,6 +9,8 @@ output: html_document
 
 ```{r}
 library(data.table)
+library(gdsfmt)
+library(SNPRelate)
 data <- fread("YRI6.raw")
 alleles <- data[,7:ncol(data)]
 dataDim <- dim(alleles)
@@ -93,15 +95,39 @@ plot(vector_p0,vector_p2)
 
 ## 5. Plot m against s and use the pedigree information of the YRI06.raw file to label the data points in the scatterplot. Recall that column 3 and 4 from the YRI06.raw contain information about the family relationship of the participants. Create two labels: one for individuals that have a parent-offspring relationship and another one for unrelated individuals. Comment on the results.
 
-
+```{r}
+labels <- ifelse(data[,3] != 0 & data[,4] != 2, "Parent-Offspring", "Unrelated")
+plot(vector_m,vector_s, xlab = "m", ylab = "s", main = "Scatterplot of m against s", col = ifelse(labels == "Parent-Offspring", "red", "blue"))
+legend("topright", legend = unique(labels), col = c("red", "blue"), pch = 1)
+```
 
 
 ## 6. Use the package SNPRelate to estimate the IBD probabilities, and plot the probabilities of sharing 0 and 1 IBD alleles (k0 and k1) for all pairs of individuals. Use the pedigree information of the YRI06.raw file to label the data points in the scatterplot (same as before, one colour for parent-offspring relationship and another colour for unrelated individuals).
 
+```{r}
+snpgdsCreateGeno("YRI6.gds", genmat = as.matrix(alleles), snp.id = names(alleles), sample.id = data$IID, snpfirstdim=FALSE)
+genofile <- snpgdsOpen("YRI6.gds")
+snpset <- snpgdsLDpruning(genofile, ld.threshold=0.2)
+snpset.id <- unlist(unname(snpset))
+ibd <- snpgdsIBDMLE(genofile,maf=0.05, missing.rate=0.05,snp.id=snpset.id, num.thread=2)
+ibd.coeff <- snpgdsIBDSelection(ibd)
+
+
+labels <- ifelse(data[,3] != 0 & data[,4] != 2, "Parent-Offspring", "Unrelated")
+
+plot(ibd.coeff$k0, ibd.coeff$k1, xlim=c(0,1), ylim=c(0,1),
+ xlab="k0", ylab="k1", main="YRI samples (MLE)")
+lines(c(0,1), c(1,0), col="red", lty=2)
+
+points(ibd$k0[labels == "Parent-Offspring"], ibd$k1[labels == "Parent-Offspring"], col = "red", pch = 19)
+points(ibd$k0[labels == "Unrelated"], ibd$k1[labels == "Unrelated"], col = "blue", pch = 19)
+
+legend("topright", legend = unique(labels), col = c("red", "blue"), pch = 19)
+
+```
 
 
 ## 7. Do you think the family relationships between all individuals were correctly specified?
-
 
 
 
