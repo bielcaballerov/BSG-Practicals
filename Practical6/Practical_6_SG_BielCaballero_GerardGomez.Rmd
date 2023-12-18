@@ -61,9 +61,7 @@ vector_m[1:5]
 ## 3. Compute, for each pair of individuals (and report the first 5), the fraction of variants for which the individuals share 0 alleles (p0), and the fraction of variants for which the individuals share 2 alleles (p2). Check if m = 1 − p0 + p2 holds.
 
 ```{r}
-
 vector_p0 <- c()
-vector_p1 <- c()
 vector_p2 <- c()
 
 for(i in 1:(nrow(alleles)-1)){
@@ -74,7 +72,6 @@ for(i in 1:(nrow(alleles)-1)){
     allelesShared <- apply(rbind(ind1,ind2),2,FUN=share)
     
     vector_0 <- sum(allelesShared == 0)
-    vector_1 <- sum(allelesShared == 1)
     vector_2 <- sum(allelesShared == 2)
     
     vector_p0 <- append(vector_p0,vector_0/numAlleles)
@@ -82,6 +79,8 @@ for(i in 1:(nrow(alleles)-1)){
   } 
 }
 
+vector_p0[1:5]
+vector_p2[1:5]
 ```
 
 ## 4.Plot m against s and plot p0 against p2. Comment on the results.
@@ -91,7 +90,8 @@ par(mfrow = c(1,2))
 plot(vector_m,vector_s)
 plot(vector_p0,vector_p2)
 ```
-
+In the plot on the left, we can see that the majority of the pairs have an m of around 1.25 which means that they share 1 allele an standard deviation of 0.45. Also in the bottom right corner we can see the most related ones which have an m of 1.5.
+On the second plot we can see that there are some variables that have p0 at 0, this means that they always share at least 1 allele, this observations are probably the once we observed before in the bottom right corner, also this group has a 0.5 of the time share both alleles.
 
 ## 5. Plot m against s and use the pedigree information of the YRI06.raw file to label the data points in the scatterplot. Recall that column 3 and 4 from the YRI06.raw contain information about the family relationship of the participants. Create two labels: one for individuals that have a parent-offspring relationship and another one for unrelated individuals. Comment on the results.
 
