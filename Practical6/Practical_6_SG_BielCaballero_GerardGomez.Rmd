@@ -100,6 +100,7 @@ labels <- ifelse(data[,3] != 0 & data[,4] != 2, "Parent-Offspring", "Unrelated")
 plot(vector_m,vector_s, xlab = "m", ylab = "s", main = "Scatterplot of m against s", col = ifelse(labels == "Parent-Offspring", "red", "blue"))
 legend("topright", legend = unique(labels), col = c("red", "blue"), pch = 1)
 ```
+The results show that the conclusion made in the previous question to be true, as having an m of 1.50 means that there is a Parent-Offspring relationship and having an m of 1.25 mens either being Unrelated or having a Parent-Offspring relationship.
 
 
 ## 6. Use the package SNPRelate to estimate the IBD probabilities, and plot the probabilities of sharing 0 and 1 IBD alleles (k0 and k1) for all pairs of individuals. Use the pedigree information of the YRI06.raw file to label the data points in the scatterplot (same as before, one colour for parent-offspring relationship and another colour for unrelated individuals).
@@ -126,9 +127,8 @@ legend("topright", legend = unique(labels), col = c("red", "blue"), pch = 19)
 
 ```
 
-
 ## 7. Do you think the family relationships between all individuals were correctly specified?
-
+The family relationships between individuals are correctly specified for the ones with k0=0, but when k0>0 and k1 is more or less 0, the relationship would have to be Unrelated. When k0>0 and k1>0 there can be Parent-Offspring relationship but there would have to be more Unrelated relationships. When k0=0 and k1=0, the relationship is monozygotic twins.
 
 
 
